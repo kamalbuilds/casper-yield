@@ -13,30 +13,60 @@ const navLinks: NavLink[] = [
   { path: '/analytics', label: 'Analytics' },
 ];
 
+// Format balance from motes to CSPR
+function formatBalance(value?: string | null): string {
+  if (!value) return '0';
+  const motes = Number(value);
+  if (!Number.isFinite(motes)) return '0';
+  return (motes / 1e9).toFixed(4);
+}
+
 export const Header: React.FC = () => {
   const location = useLocation();
   const clickRef = useClickRef();
-  const [activeAccount, setActiveAccount] = useState<string | null>(null);
+  const [activeAccount, setActiveAccount] = useState<any>(null);
 
   useEffect(() => {
-    clickRef?.on('csprclick:signed_in', async (evt: any) => {
-      setActiveAccount(evt.account?.public_key || null);
-    });
-    clickRef?.on('csprclick:switched_account', async (evt: any) => {
-      setActiveAccount(evt.account?.public_key || null);
-    });
-    clickRef?.on('csprclick:signed_out', async () => {
+    if (!clickRef) return;
+
+    const handleSignedIn = (evt: any) => {
+      console.log('Signed in:', evt);
+      setActiveAccount(evt.account || null);
+    };
+
+    const handleSwitchAccount = (evt: any) => {
+      console.log('Account switched:', evt);
+      setActiveAccount(evt.account || null);
+    };
+
+    const handleSignedOut = () => {
+      console.log('Signed out');
       setActiveAccount(null);
-    });
-    clickRef?.on('csprclick:disconnected', async () => {
+    };
+
+    const handleDisconnected = () => {
+      console.log('Disconnected');
       setActiveAccount(null);
-    });
+    };
+
+    clickRef.on('csprclick:signed_in', handleSignedIn);
+    clickRef.on('csprclick:switched_account', handleSwitchAccount);
+    clickRef.on('csprclick:signed_out', handleSignedOut);
+    clickRef.on('csprclick:disconnected', handleDisconnected);
 
     // Check if already connected
-    const account = clickRef?.getActiveAccount();
+    const account = clickRef.getActiveAccount?.();
     if (account) {
-      setActiveAccount(account.public_key);
+      console.log('Already connected:', account);
+      setActiveAccount(account);
     }
+
+    return () => {
+      clickRef.off('csprclick:signed_in', handleSignedIn);
+      clickRef.off('csprclick:switched_account', handleSwitchAccount);
+      clickRef.off('csprclick:signed_out', handleSignedOut);
+      clickRef.off('csprclick:disconnected', handleDisconnected);
+    };
   }, [clickRef]);
 
   const handleConnect = async () => {
@@ -57,8 +87,13 @@ export const Header: React.FC = () => {
   };
 
   const truncateAddress = (address: string) => {
-    return `${address.slice(0, 8)}...${address.slice(-6)}`;
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
+
+  const publicKey = activeAccount?.public_key || activeAccount?.publicKey || '';
+  const balance = formatBalance(
+    activeAccount?.liquid_balance ?? activeAccount?.balance ?? null
+  );
 
   return (
     <header className="bg-casper-dark border-b border-casper-gray">
@@ -95,9 +130,14 @@ export const Header: React.FC = () => {
           <div className="flex items-center">
             {activeAccount ? (
               <div className="flex items-center space-x-3">
-                <span className="text-gray-300 text-sm font-mono">
-                  {truncateAddress(activeAccount)}
-                </span>
+                <div className="text-right">
+                  <span className="text-gray-300 text-sm font-mono block">
+                    {truncateAddress(publicKey)}
+                  </span>
+                  <span className="text-gray-400 text-xs">
+                    {balance} CSPR
+                  </span>
+                </div>
                 <button
                   onClick={handleDisconnect}
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"

@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiService, VaultData } from '../services/apiService';
 import { useClickRef } from '@make-software/csprclick-ui';
+import { useTransactions } from '../context/TransactionsContext';
+import { buildDepositTransaction, buildWithdrawTransaction, buildHarvestTransaction } from '../lib/vault-transactions';
+import { csprToMotes } from '../utils/formatters';
 
 // Query keys
 const VAULT_KEYS = {
@@ -49,90 +52,117 @@ export function useVaultAnalytics(vaultId: string) {
 
 /**
  * Hook for deposit mutation
- * Note: This is a stub implementation. Full implementation will require
- * integration with the deployed smart contracts using casper-js-sdk v5.
  */
 export function useDeposit() {
   const queryClient = useQueryClient();
   const clickRef = useClickRef();
+  const { sendTransaction } = useTransactions();
 
   return useMutation({
     mutationFn: async ({ amount, vaultId }: { amount: string; vaultId?: string }) => {
       const activeAccount = clickRef?.getActiveAccount?.();
-      if (!activeAccount) {
+      if (!activeAccount?.public_key) {
         throw new Error('No active account. Please connect your wallet.');
       }
 
-      // TODO: Implement actual deposit transaction using casper-js-sdk v5
-      // This will involve:
-      // 1. Creating a Deploy using the new SDK API
-      // 2. Signing with CSPR.click
-      // 3. Submitting to the network
+      const publicKey = activeAccount.public_key;
+      const amountInMotes = csprToMotes(parseFloat(amount)).toString();
 
-      console.log('Deposit requested:', { amount, vaultId, account: activeAccount.public_key });
+      console.log('Building deposit transaction:', { amount, amountInMotes, vaultId, publicKey });
 
-      // For now, simulate a successful transaction
-      return { deployHash: 'pending-implementation' };
-    },
-    onSuccess: () => {
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: VAULT_KEYS.all });
+      // Build the transaction
+      const txPayload = buildDepositTransaction({
+        amount: amountInMotes,
+        senderPublicKeyHex: publicKey,
+        vaultId,
+      });
+
+      console.log('Transaction payload built:', txPayload);
+
+      // Send via CSPR.click wallet
+      const result = await sendTransaction('deposit', txPayload, publicKey, () => {
+        // Invalidate queries on success
+        queryClient.invalidateQueries({ queryKey: VAULT_KEYS.all });
+      });
+
+      return result;
     },
   });
 }
 
 /**
  * Hook for withdraw mutation
- * Note: This is a stub implementation. Full implementation will require
- * integration with the deployed smart contracts using casper-js-sdk v5.
  */
 export function useWithdraw() {
   const queryClient = useQueryClient();
   const clickRef = useClickRef();
+  const { sendTransaction } = useTransactions();
 
   return useMutation({
     mutationFn: async ({ shares, vaultId }: { shares: string; vaultId?: string }) => {
       const activeAccount = clickRef?.getActiveAccount?.();
-      if (!activeAccount) {
+      if (!activeAccount?.public_key) {
         throw new Error('No active account. Please connect your wallet.');
       }
 
-      // TODO: Implement actual withdraw transaction using casper-js-sdk v5
-      console.log('Withdraw requested:', { shares, vaultId, account: activeAccount.public_key });
+      const publicKey = activeAccount.public_key;
 
-      return { deployHash: 'pending-implementation' };
-    },
-    onSuccess: () => {
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: VAULT_KEYS.all });
+      console.log('Building withdraw transaction:', { shares, vaultId, publicKey });
+
+      // Build the transaction
+      const txPayload = buildWithdrawTransaction({
+        shares,
+        senderPublicKeyHex: publicKey,
+        vaultId,
+      });
+
+      console.log('Transaction payload built:', txPayload);
+
+      // Send via CSPR.click wallet
+      const result = await sendTransaction('withdraw', txPayload, publicKey, () => {
+        // Invalidate queries on success
+        queryClient.invalidateQueries({ queryKey: VAULT_KEYS.all });
+      });
+
+      return result;
     },
   });
 }
 
 /**
  * Hook for harvest mutation
- * Note: This is a stub implementation. Full implementation will require
- * integration with the deployed smart contracts using casper-js-sdk v5.
  */
 export function useHarvest() {
   const queryClient = useQueryClient();
   const clickRef = useClickRef();
+  const { sendTransaction } = useTransactions();
 
   return useMutation({
     mutationFn: async ({ vaultId }: { vaultId?: string }) => {
       const activeAccount = clickRef?.getActiveAccount?.();
-      if (!activeAccount) {
+      if (!activeAccount?.public_key) {
         throw new Error('No active account. Please connect your wallet.');
       }
 
-      // TODO: Implement actual harvest transaction using casper-js-sdk v5
-      console.log('Harvest requested:', { vaultId, account: activeAccount.public_key });
+      const publicKey = activeAccount.public_key;
 
-      return { deployHash: 'pending-implementation' };
-    },
-    onSuccess: () => {
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: VAULT_KEYS.all });
+      console.log('Building harvest transaction:', { vaultId, publicKey });
+
+      // Build the transaction
+      const txPayload = buildHarvestTransaction({
+        senderPublicKeyHex: publicKey,
+        vaultId,
+      });
+
+      console.log('Transaction payload built:', txPayload);
+
+      // Send via CSPR.click wallet
+      const result = await sendTransaction('harvest', txPayload, publicKey, () => {
+        // Invalidate queries on success
+        queryClient.invalidateQueries({ queryKey: VAULT_KEYS.all });
+      });
+
+      return result;
     },
   });
 }

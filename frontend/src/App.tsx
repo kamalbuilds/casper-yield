@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Header } from './components';
 import { Dashboard, VaultDetails, Analytics } from './pages';
+import { TransactionsProvider } from './context/TransactionsContext';
 
 // Create a Query Client for React Query
 const queryClient = new QueryClient({
@@ -23,17 +24,19 @@ const MainContainer = styled.div`
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <MainContainer>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/vaults" element={<Dashboard />} />
-            <Route path="/vaults/:vaultId" element={<VaultDetails />} />
-            <Route path="/analytics" element={<Analytics />} />
-          </Routes>
-        </MainContainer>
-      </Router>
+      <TransactionsProvider>
+        <Router>
+          <MainContainer>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/vaults" element={<Dashboard />} />
+              <Route path="/vaults/:vaultId" element={<VaultDetails />} />
+              <Route path="/analytics" element={<Analytics />} />
+            </Routes>
+          </MainContainer>
+        </Router>
+      </TransactionsProvider>
     </QueryClientProvider>
   );
 };

@@ -10,7 +10,7 @@ const clickOptions: CsprClickInitOptions = {
   appName: 'CasperYield',
   contentMode: CONTENT_MODE.IFRAME,
   providers: ['casper-wallet', 'ledger', 'torus-wallet', 'casperdash', 'metamask-snap', 'casper-signer'],
-  appId: '019bae3d-6be3-701a-805d-4e597064d668' // Empty for development - register at https://cspr.click for production
+  appId: '01f43518-c278-4b99-87cb-7a8ccaea' // Empty for development - register at https://cspr.click for production
 };
 
 // Build theme using the proper method
