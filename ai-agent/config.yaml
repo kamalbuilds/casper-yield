@@ -1,0 +1,115 @@
+# CasperYield AI Agent Configuration
+
+# Casper Network Configuration
+casper:
+  # RPC Endpoints
+  rpc:
+    mainnet: "https://rpc.mainnet.casperlabs.io/rpc"
+    testnet: "https://rpc.testnet.casperlabs.io/rpc"
+
+  # Active network (mainnet or testnet)
+  network: "testnet"
+
+  # Chain name
+  chain_name: "casper-test"
+
+# Contract Addresses (Testnet)
+contracts:
+  vault_factory: "hash-0000000000000000000000000000000000000000000000000000000000000001"
+  strategy_registry: "hash-0000000000000000000000000000000000000000000000000000000000000002"
+  oracle: "hash-0000000000000000000000000000000000000000000000000000000000000003"
+
+# Strategy Configuration
+strategies:
+  # List of supported yield strategies
+  - id: "staking"
+    name: "Native Staking"
+    type: "staking"
+    min_allocation: 0.1
+    max_allocation: 0.5
+
+  - id: "lending"
+    name: "Lending Protocol"
+    type: "lending"
+    min_allocation: 0.0
+    max_allocation: 0.4
+
+  - id: "lp"
+    name: "Liquidity Provision"
+    type: "liquidity"
+    min_allocation: 0.0
+    max_allocation: 0.3
+
+# Risk Parameters
+risk:
+  # Maximum acceptable volatility (annualized)
+  max_volatility: 0.30
+
+  # Minimum acceptable Sharpe ratio
+  min_sharpe_ratio: 0.5
+
+  # Risk-free rate (annualized)
+  risk_free_rate: 0.02
+
+  # Maximum drawdown tolerance
+  max_drawdown: 0.15
+
+  # Minimum TVL requirement (in USD)
+  min_tvl: 100000
+
+  # Minimum protocol age (in days)
+  min_protocol_age: 30
+
+# Optimization Parameters
+optimization:
+  # Rebalancing frequency (in hours)
+  rebalance_interval: 24
+
+  # Minimum change to trigger rebalance (as percentage)
+  min_rebalance_threshold: 0.05
+
+  # Maximum slippage tolerance
+  max_slippage: 0.02
+
+  # Number of historical days for prediction
+  lookback_days: 30
+
+  # Optimization method (mean_variance, risk_parity, max_sharpe)
+  method: "max_sharpe"
+
+# API Server Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: true
+
+  # CORS settings
+  cors:
+    allow_origins:
+      - "http://localhost:3000"
+      - "http://localhost:5173"
+    allow_methods:
+      - "GET"
+      - "POST"
+    allow_headers:
+      - "*"
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "json"
+  file: "logs/agent.log"
+
+# Data Sources
+data_sources:
+  # On-chain data polling interval (seconds)
+  poll_interval: 60
+
+  # Historical data cache duration (seconds)
+  cache_duration: 300
+
+  # External price feeds
+  price_feeds:
+    - name: "coingecko"
+      url: "https://api.coingecko.com/api/v3"
+      enabled: true
