@@ -1,0 +1,11 @@
+[[contracts]]
+fqn = "vault::VaultManager"
+
+[[contracts]]
+fqn = "router::StrategyRouter"
+
+[[contracts]]
+fqn = "strategies::SCsprStrategy"
+
+[[contracts]]
+fqn = "strategies::DexLpStrategy"

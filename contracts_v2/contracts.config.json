@@ -1,0 +1,45 @@
+{
+  "network": "casper-test",
+  "nodeAddress": "https://node.testnet.casper.network/rpc",
+  "deployerPublicKey": "01c5d9be1c30f5ce0e4d1dd2473cc7643e8b7c15bd19023bf5986b09785392714d",
+  "deployerAccountHash": "0a3ecf18fc2001e44a0eba79be324698599a8f74b34a8122f50b979cc40d8315",
+  "contracts": {
+    "VaultManager": {
+      "contractHash": "hash-pending-deployment",
+      "contractPackageHash": "hash-pending-deployment",
+      "status": "pending",
+      "description": "Main vault contract for yield aggregation"
+    },
+    "StrategyRouter": {
+      "contractHash": "hash-pending-deployment",
+      "contractPackageHash": "hash-pending-deployment",
+      "status": "pending",
+      "description": "Routes funds between different yield strategies"
+    },
+    "SCsprStrategy": {
+      "contractHash": "hash-pending-deployment",
+      "contractPackageHash": "hash-pending-deployment",
+      "status": "pending",
+      "description": "Strategy for sCSPR liquid staking yields"
+    },
+    "DexLpStrategy": {
+      "contractHash": "hash-pending-deployment",
+      "contractPackageHash": "hash-pending-deployment",
+      "status": "pending",
+      "description": "Strategy for DEX liquidity provision yields"
+    }
+  },
+  "wasmFiles": {
+    "VaultManager": "wasm/VaultManager.wasm",
+    "StrategyRouter": "wasm/StrategyRouter.wasm",
+    "SCsprStrategy": "wasm/SCsprStrategy.wasm",
+    "DexLpStrategy": "wasm/DexLpStrategy.wasm"
+  },
+  "deploymentInstructions": {
+    "step1": "Install Casper Wallet browser extension from https://www.casperwallet.io/",
+    "step2": "Import the mnemonic phrase into Casper Wallet",
+    "step3": "Go to https://testnet.cspr.live/tools/faucet",
+    "step4": "Connect wallet and request 1000 CSPR tokens",
+    "step5": "Run: python3 deploy_contracts.py"
+  }
+}
