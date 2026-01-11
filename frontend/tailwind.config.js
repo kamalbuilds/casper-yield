@@ -8,6 +8,7 @@ module.exports = {
       colors: {
         casper: {
           red: '#FF0012',
+          blue: '#3B82F6',
           dark: '#1A1A2E',
           darker: '#0F0F1A',
           gray: '#2D2D44',

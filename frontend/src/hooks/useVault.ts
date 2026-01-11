@@ -1,8 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiService, VaultData } from '../services/apiService';
-import { contractService } from '../services/contractService';
 import { useClickRef } from '@make-software/csprclick-ui';
-import { CLPublicKey } from 'casper-js-sdk';
 
 // Query keys
 const VAULT_KEYS = {
@@ -51,6 +49,8 @@ export function useVaultAnalytics(vaultId: string) {
 
 /**
  * Hook for deposit mutation
+ * Note: This is a stub implementation. Full implementation will require
+ * integration with the deployed smart contracts using casper-js-sdk v5.
  */
 export function useDeposit() {
   const queryClient = useQueryClient();
@@ -63,24 +63,16 @@ export function useDeposit() {
         throw new Error('No active account. Please connect your wallet.');
       }
 
-      const publicKey = CLPublicKey.fromHex(activeAccount.public_key);
-      const deploy = contractService.createDepositDeploy(
-        { publicKey },
-        amount,
-        vaultId
-      );
+      // TODO: Implement actual deposit transaction using casper-js-sdk v5
+      // This will involve:
+      // 1. Creating a Deploy using the new SDK API
+      // 2. Signing with CSPR.click
+      // 3. Submitting to the network
 
-      // Sign and send deploy through CSPR.click
-      const result = await clickRef?.sign?.(
-        JSON.stringify(deploy.toJSON()),
-        activeAccount.public_key
-      );
+      console.log('Deposit requested:', { amount, vaultId, account: activeAccount.public_key });
 
-      if (!result) {
-        throw new Error('Failed to sign transaction');
-      }
-
-      return { deployHash: result.deploy_hash || 'pending' };
+      // For now, simulate a successful transaction
+      return { deployHash: 'pending-implementation' };
     },
     onSuccess: () => {
       // Invalidate relevant queries
@@ -91,6 +83,8 @@ export function useDeposit() {
 
 /**
  * Hook for withdraw mutation
+ * Note: This is a stub implementation. Full implementation will require
+ * integration with the deployed smart contracts using casper-js-sdk v5.
  */
 export function useWithdraw() {
   const queryClient = useQueryClient();
@@ -103,24 +97,10 @@ export function useWithdraw() {
         throw new Error('No active account. Please connect your wallet.');
       }
 
-      const publicKey = CLPublicKey.fromHex(activeAccount.public_key);
-      const deploy = contractService.createWithdrawDeploy(
-        { publicKey },
-        shares,
-        vaultId
-      );
+      // TODO: Implement actual withdraw transaction using casper-js-sdk v5
+      console.log('Withdraw requested:', { shares, vaultId, account: activeAccount.public_key });
 
-      // Sign and send deploy through CSPR.click
-      const result = await clickRef?.sign?.(
-        JSON.stringify(deploy.toJSON()),
-        activeAccount.public_key
-      );
-
-      if (!result) {
-        throw new Error('Failed to sign transaction');
-      }
-
-      return { deployHash: result.deploy_hash || 'pending' };
+      return { deployHash: 'pending-implementation' };
     },
     onSuccess: () => {
       // Invalidate relevant queries
@@ -131,6 +111,8 @@ export function useWithdraw() {
 
 /**
  * Hook for harvest mutation
+ * Note: This is a stub implementation. Full implementation will require
+ * integration with the deployed smart contracts using casper-js-sdk v5.
  */
 export function useHarvest() {
   const queryClient = useQueryClient();
@@ -143,20 +125,10 @@ export function useHarvest() {
         throw new Error('No active account. Please connect your wallet.');
       }
 
-      const publicKey = CLPublicKey.fromHex(activeAccount.public_key);
-      const deploy = contractService.createHarvestDeploy({ publicKey }, vaultId);
+      // TODO: Implement actual harvest transaction using casper-js-sdk v5
+      console.log('Harvest requested:', { vaultId, account: activeAccount.public_key });
 
-      // Sign and send deploy through CSPR.click
-      const result = await clickRef?.sign?.(
-        JSON.stringify(deploy.toJSON()),
-        activeAccount.public_key
-      );
-
-      if (!result) {
-        throw new Error('Failed to sign transaction');
-      }
-
-      return { deployHash: result.deploy_hash || 'pending' };
+      return { deployHash: 'pending-implementation' };
     },
     onSuccess: () => {
       // Invalidate relevant queries

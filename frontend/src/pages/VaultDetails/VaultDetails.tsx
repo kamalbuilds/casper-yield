@@ -162,8 +162,8 @@ export const VaultDetails: React.FC = () => {
                         border: '1px solid #2D2D44',
                         borderRadius: '8px',
                       }}
-                      labelFormatter={(ts) => formatDate(ts)}
-                      formatter={(value: number) => [`${value}%`, 'APY']}
+                      labelFormatter={(ts) => formatDate(ts as number)}
+                      formatter={(value) => [`${value}%`, 'APY']}
                     />
                     <Line
                       type="monotone"

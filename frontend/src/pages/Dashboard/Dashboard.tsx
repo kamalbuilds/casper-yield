@@ -148,10 +148,12 @@ export const Dashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-casper-darker">
-                    {positions.map((position) => (
+                    {positions.map((position) => {
+                      const positionVault = vaults?.find((v) => v.id === position.vaultId);
+                      return (
                       <tr key={position.vaultId} className="hover:bg-casper-darker/50">
                         <td className="px-6 py-4 text-white font-medium">
-                          {position.vaultId}
+                          {positionVault?.name || position.vaultId}
                         </td>
                         <td className="px-6 py-4 text-right text-gray-300">
                           {formatCspr(position.deposited)} CSPR
@@ -171,7 +173,8 @@ export const Dashboard: React.FC = () => {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

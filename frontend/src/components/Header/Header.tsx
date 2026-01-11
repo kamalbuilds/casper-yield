@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ClickUI } from '@make-software/csprclick-ui';
+import { useClickRef } from '@make-software/csprclick-ui';
 
 interface NavLink {
   path: string;
@@ -15,6 +15,50 @@ const navLinks: NavLink[] = [
 
 export const Header: React.FC = () => {
   const location = useLocation();
+  const clickRef = useClickRef();
+  const [activeAccount, setActiveAccount] = useState<string | null>(null);
+
+  useEffect(() => {
+    clickRef?.on('csprclick:signed_in', async (evt: any) => {
+      setActiveAccount(evt.account?.public_key || null);
+    });
+    clickRef?.on('csprclick:switched_account', async (evt: any) => {
+      setActiveAccount(evt.account?.public_key || null);
+    });
+    clickRef?.on('csprclick:signed_out', async () => {
+      setActiveAccount(null);
+    });
+    clickRef?.on('csprclick:disconnected', async () => {
+      setActiveAccount(null);
+    });
+
+    // Check if already connected
+    const account = clickRef?.getActiveAccount();
+    if (account) {
+      setActiveAccount(account.public_key);
+    }
+  }, [clickRef]);
+
+  const handleConnect = async () => {
+    try {
+      await clickRef?.signIn();
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      await clickRef?.signOut();
+      setActiveAccount(null);
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
+  };
+
+  const truncateAddress = (address: string) => {
+    return `${address.slice(0, 8)}...${address.slice(-6)}`;
+  };
 
   return (
     <header className="bg-casper-dark border-b border-casper-gray">
@@ -48,8 +92,27 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Wallet Connection */}
-          <div className="flex items-center space-x-4">
-            <ClickUI />
+          <div className="flex items-center">
+            {activeAccount ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-gray-300 text-sm font-mono">
+                  {truncateAddress(activeAccount)}
+                </span>
+                <button
+                  onClick={handleDisconnect}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Disconnect
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleConnect}
+                className="px-4 py-2 bg-casper-red hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                Connect Wallet
+              </button>
+            )}
           </div>
         </div>
       </div>

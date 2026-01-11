@@ -67,9 +67,9 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
     }
   };
 
-  const estimatedAmount = formatCspr(
-    (BigInt(shareValue) * BigInt(percentage)) / BigInt(100)
-  );
+  const estimatedAmount = shareValue && shareValue !== '0'
+    ? formatCspr((BigInt(shareValue) * BigInt(percentage)) / BigInt(100))
+    : '0';
 
   const percentageButtons = [25, 50, 75, 100];
 
