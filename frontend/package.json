@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "cross-env BUILD_PATH='./build' react-app-rewired build",
+    "build": "cross-env TSC_COMPILE_ON_ERROR=true BUILD_PATH='./build' react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint .",
